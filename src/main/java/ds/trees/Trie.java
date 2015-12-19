@@ -1,86 +1,123 @@
 package ds.trees;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
 
 /**
  * Created by skupunarapu on 12/16/2015.
  */
 public class Trie {
-
     private TrieNode root;
 
-    public Trie() {
-        root = new TrieNode();
+    /* Constructor */
+    public Trie()
+    {
+        root = new TrieNode(' ');
     }
-
-    // Inserts a word into the trie.
-    public void insert(String word) {
-        HashMap<Character, TrieNode> children = root.children;
-
-        for(int i=0; i<word.length(); i++){
-            char c = word.charAt(i);
-
-            TrieNode t;
-            if(children.containsKey(c)){
-                t = children.get(c);
-            }else{
-                t = new TrieNode(c);
-                children.put(c, t);
+    /* Function to insert word */
+    public void insert(String word)
+    {
+        if (search(word) == true)
+            return;
+        TrieNode current = root;
+        for (char ch : word.toCharArray() )
+        {
+            TrieNode child = current.subNode(ch);
+            if (child != null)
+                current = child;
+            else
+            {
+                current.childList.add(new TrieNode(ch));
+                current = current.subNode(ch);
             }
-
-            children = t.children;
-
-            //set leaf node
-            if(i==word.length()-1)
-                t.isLeaf = true;
+            current.count++;
         }
+        current.isEnd = true;
     }
-
-    // Returns if the word is in the trie.
-    public boolean search(String word) {
-        TrieNode t = searchNode(word);
-
-        if(t != null && t.isLeaf)
+    /* Function to search for word */
+    public boolean search(String word)
+    {
+        TrieNode current = root;
+        for (char ch : word.toCharArray() )
+        {
+            if (current.subNode(ch) == null)
+                return false;
+            else
+                current = current.subNode(ch);
+        }
+        if (current.isEnd == true)
             return true;
-        else
-            return false;
+        return false;
     }
-
-    // Returns if there is any word in the trie
-    // that starts with the given prefix.
-    public boolean startsWith(String prefix) {
-        if(searchNode(prefix) == null)
-            return false;
-        else
-            return true;
-    }
-
-    public TrieNode searchNode(String str){
-        Map<Character, TrieNode> children = root.children;
-        TrieNode t = null;
-        for(int i=0; i<str.length(); i++){
-            char c = str.charAt(i);
-            if(children.containsKey(c)){
-                t = children.get(c);
-                children = t.children;
-            }else{
-                return null;
+    /* Function to remove a word */
+    public void remove(String word)
+    {
+        if (search(word) == false)
+        {
+            System.out.println(word +" does not exist in trie\n");
+            return;
+        }
+        TrieNode current = root;
+        for (char ch : word.toCharArray())
+        {
+            TrieNode child = current.subNode(ch);
+            if (child.count == 1)
+            {
+                current.childList.remove(child);
+                return;
+            }
+            else
+            {
+                child.count--;
+                current = child;
             }
         }
-
-        return t;
+        current.isEnd = false;
     }
 }
 
-class TrieNode {
-    char c;
-    HashMap<Character, TrieNode> children = new HashMap<Character, TrieNode>();
-    boolean isLeaf;
+class TrieNode
+{
+    char content;
+    boolean isEnd;
+    int count;
+    LinkedList<TrieNode> childList;
 
-    public TrieNode() {}
+    /* Constructor */
+    public TrieNode(char c)
+    {
+        childList = new LinkedList<TrieNode>();
+        isEnd = false;
+        content = c;
+        count = 0;
+    }
+    public TrieNode subNode(char c)
+    {
+        if (childList != null)
+            for (TrieNode eachChild : childList)
+                if (eachChild.content == c)
+                    return eachChild;
+        return null;
+    }
+}
 
-    public TrieNode(char c){
-        this.c = c;
+class TestTrie{
+    public static void main(String[] args) {
+        Trie t = new Trie();
+        System.out.println("Trie Test\n");
+
+        t.insert("trie");
+        t.insert("tree");
+        t.insert("branch");
+        t.insert("beach");
+
+        System.out.println(t.search("bean"));
+        System.out.println(t.search("beach"));
+
+
+
+        t.remove("bean");
+        t.remove("beach");
+        System.out.println();
+
     }
 }
