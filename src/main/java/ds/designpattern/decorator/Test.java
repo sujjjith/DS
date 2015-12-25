@@ -10,6 +10,7 @@ public class Test {
         Car j = new JaguarCar(b);
         j.typeOfCar();
 
+        System.out.println();
         System.out.println("***********");
 
         Car p = new PorscheCar(j);
