@@ -1,8 +1,6 @@
-package ds.designpattern.builder;
+package ds.designpattern.creational.builder;
 
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by skupunarapu on 12/22/2015.
